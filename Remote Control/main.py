@@ -16,4 +16,8 @@ def count(time):
         sleep(1)
     print('lesgo!')
 count(2)
-#Arm
+
+#Sambung drone
+def connect_vehicle():
+    vehicle = connect("tcp:127.0.0.1:5762", wait_ready=True)
+    return True
