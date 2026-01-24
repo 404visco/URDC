@@ -11,7 +11,7 @@ from dronekit import connect,VehicleMode
 from pymavlink import mavutil
 
 #delay
-def count(time):
+def delay(time):
     for i in range(time):
         print(i+1)
         sleep(1)
@@ -36,7 +36,7 @@ def arm(vehicle):
     print('Waiting for Arming...')
     vehicle.arm(wait=True) #Arming drone
     while not vehicle.armed:
-        count(1)
+        delay(1)
     print('Armed✅')
 
 #Takeoff
@@ -53,8 +53,16 @@ def take0ff(vehicle,altitude):
         else:
             print('\nTakeoff done')
             break
-        sleep(1)
-        
+def hover(lama):
+    print('Hover:')
+    hitung=0
+    while True:
+        if hitung<lama:
+            print(hitung+1)
+            hitung+=1
+            sleep(1)
+        else:
+            print('Hover selesai')
 #Landing
 def land(vehicle):
     print('Landing...')

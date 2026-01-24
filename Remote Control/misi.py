@@ -15,4 +15,4 @@ def run_misi():
     arm(vehicle)
 
     take0ff(vehicle, 1.5) #Takeoff 1.5 m
-    
+    hover(5) #Hover 5 detik stelah tsKEOFF
