@@ -45,3 +45,10 @@ def take0ff(vehicle,altitude):
     arm(vehicle) #arming
     print('Meluncur...')
     vehicle.simple_takeoff(altitude) #takeoff ke altitude
+
+#Landing
+def land(vehicle):
+    print('Landing...')
+    change_mode(vehicle,'LAND')
+    print('Landed')
+    
