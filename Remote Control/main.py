@@ -33,9 +33,15 @@ def change_mode(vehicle, flight_mode):
 
 #Arm
 def arm(vehicle):
-    print('Wait for Arming...')
+    print('Waiting for Arming...')
     vehicle.arm(wait=True) #Arming drone
     while not vehicle.armed:
         count(1)
     print('Armed✅')
 
+#Takeoff
+def take0ff(vehicle,altitude):
+    change_mode(vehicle,'GUIDED') #ubah mode dulu
+    arm(vehicle) #arming
+    print('Meluncur...')
+    vehicle.simple_takeoff(altitude) #takeoff ke altitude
