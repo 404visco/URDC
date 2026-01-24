@@ -16,7 +16,6 @@ def count(time):
         print(i+1)
         sleep(1)
     print('lesgo!')
-count(2)
 
 #Sambung drone
 def connect_vehicle():
@@ -31,3 +30,12 @@ def change_mode(vehicle, flight_mode):
         print(f"Masuk mode {flight_mode}🫡")
     else:
         print("Gagal ganti mode😥")
+
+#Arm
+def arm(vehicle):
+    print('Wait for Arming...')
+    vehicle.arm(wait=True) #Arming drone
+    while not vehicle.armed:
+        count(1)
+    print('Armed✅')
+
