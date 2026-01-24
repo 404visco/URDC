@@ -79,3 +79,14 @@ def send_ned_velocity(vehicle, vx,vy,vz):
         0,0,0,
         0,0
         )
+    
+def maju(kecepatan, lama):
+    hitung = 0
+    print('Drone Maju')
+    while hitung<lama:
+        vx = 0
+        vx += kecepatan
+        send_ned_velocity(vx,vy=0,vz=0)
+        hitung+=0.1
+        sleep(0.1) #perintah maju harus dikirim berulang
+
