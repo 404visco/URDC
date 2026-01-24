@@ -51,4 +51,14 @@ def land(vehicle):
     print('Landing...')
     change_mode(vehicle,'LAND')
     print('Landed')
-    
+
+def send_ned_velocity(vehicle, vx,vy,vz):
+    to_send = vehicle.message_factory.set_position_target_local_ned_encode(
+        0,0,0,
+        mavutil.mavlink.MAV_FRAME_BODY_OFFSET_NED,
+        mavutil.mavlink.POSITION_TARGET_TYPEMASK_YAW_IGNORE,
+        0,0,0,
+        vx,vy,vy
+        0,0,0,
+        0,0
+        )
