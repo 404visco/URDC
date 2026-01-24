@@ -16,5 +16,5 @@ def run_misi():
 
     take0ff(vehicle, 1.5) #Takeoff 1.5 m
     hover(5) #Hover 5 detik stelah tsKEOFF
-    maju(0.25, 4) #maju 4 detik, kecepatan 0.25 m/s
-    kanan(0.25, 4)
+    maju(vehicle, 0.25, 4) #maju 4 detik, kecepatan 0.25 m/s
+    kanan(vehicle, 0.25, 4) #ke kanan 4 detik, kecepatan 0.25 m/s
