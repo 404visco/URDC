@@ -12,8 +12,10 @@ from pymavlink import mavutil
 
 #delay
 def delay(time):
-    for i in range(time):
-        print(i+1)
+    hitung = time
+    while hitung>0:
+        print(hitung)
+        hitung-=1
         sleep(1)
     print('lesgo!')
 
@@ -79,6 +81,25 @@ def send_ned_velocity(vehicle, vx,vy,vz):
         0,0,0,
         0,0
         )
+    vehicle.send_mavlink(to_send)
+
+def send_yaw(vehicle,
+             target_degree, #Target derajat
+             v_yaw = 30, #kecepatan yaw derajat/detik
+             arah = 1, # 1 = searah jarum jam, -1 = kebalikan jarum jam
+             relative = True #True = relative dari arah sekarang, False = relatif kompas
+             ):
+    to_send = vehicle.message_factory.command_log_encode(
+        0, 0,
+        mavutil.mavlink.MAV_CMD_CONDITION_YAW,
+        0,
+        target_degree,
+        v_yaw,
+        arah,
+        1 if relative else 0,
+        0, 0, 0
+    )
+    vehicle.send_mavlink(to_send)
     
 def maju(vehicle, kecepatan, lama):
     hitung = 0
@@ -89,6 +110,7 @@ def maju(vehicle, kecepatan, lama):
         send_ned_velocity(vehicle, vx, vy , vz)
         hitung+=0.1
         sleep(0.1) #perintah maju harus dikirim berulang
+        
 def kanan(vehicle, kecepatan, lama):
     hitung = 0
     print(f'Drone ke Kanan selama {lama} detik dengan kecepatan {kecepatan} m/s')
@@ -99,3 +121,7 @@ def kanan(vehicle, kecepatan, lama):
         hitung+=0.1
         sleep(0.1) #perintah maju harus dikirim berulang
 
+def yaw(vehicle, degree):
+    send_yaw(vehicle,degree)
+    print('Yaw 90 derajat',)
+    delay(3)
