@@ -43,9 +43,18 @@ def arm(vehicle):
 def take0ff(vehicle,altitude):
     change_mode(vehicle,'GUIDED') #ubah mode dulu
     arm(vehicle) #arming
-    print('Meluncur...')
+    print('Drone lagi takeoff')
     vehicle.simple_takeoff(altitude) #takeoff ke altitude
-
+    while True:
+        alt= vehicle.location.global_relative_frame.alt
+        print(f'ALtitude: {alt}')
+        if alt<altitude:
+            print('.', end='')
+        else:
+            print('\nTakeoff done')
+            break
+        sleep(1)
+        
 #Landing
 def land(vehicle):
     print('Landing...')
