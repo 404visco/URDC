@@ -58,7 +58,7 @@ def send_ned_velocity(vehicle, vx,vy,vz):
         mavutil.mavlink.MAV_FRAME_BODY_OFFSET_NED,
         mavutil.mavlink.POSITION_TARGET_TYPEMASK_YAW_IGNORE,
         0,0,0,
-        vx,vy,vy
+        vx,vy,vz,
         0,0,0,
         0,0
         )
