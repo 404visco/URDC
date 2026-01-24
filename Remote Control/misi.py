@@ -11,7 +11,7 @@ MISI
 '''
 
 def run_misi():
-    vehicle = connect_vehicle
+    vehicle = connect_vehicle()
     arm(vehicle)
 
     take0ff(vehicle, 1.5) #Takeoff 1.5 m
@@ -21,4 +21,4 @@ def run_misi():
     yaw(vehicle, 90) #yaw 90 derajat
 
 if __name__ == "__main__":
-    run_misi
+    run_misi()

@@ -22,7 +22,7 @@ def delay(time):
 #Sambung drone
 def connect_vehicle():
     vehicle = connect("tcp:127.0.0.1:5762", wait_ready=True)
-    return True
+    return vehicle
 
 #Change Mode
 def change_mode(vehicle, flight_mode):
@@ -35,6 +35,7 @@ def change_mode(vehicle, flight_mode):
 
 #Arm
 def arm(vehicle):
+    change_mode(vehicle, "GUIDED")
     print('Waiting for Arming...')
     vehicle.arm(wait=True) #Arming drone
     while not vehicle.armed:
@@ -65,22 +66,24 @@ def hover(lama):
             sleep(1)
         else:
             print('Hover selesai')
+            break
 #Landing
 def land(vehicle):
     print('Landing...')
     change_mode(vehicle,'LAND')
     print('Landed')
 
-def send_ned_velocity(vehicle, vx,vy,vz):
+def send_ned_velocity(vehicle: object, velocity_x: float, velocity_y: float, velocity_z: float):
     to_send = vehicle.message_factory.set_position_target_local_ned_encode(
-        0,0,0,
+        0, 0, 0,
         mavutil.mavlink.MAV_FRAME_BODY_OFFSET_NED,
         mavutil.mavlink.POSITION_TARGET_TYPEMASK_YAW_IGNORE,
-        0,0,0,
-        vx,vy,vz,
-        0,0,0,
-        0,0
-        )
+        0, 0, 0,
+        velocity_x, velocity_y, velocity_z,
+        0, 0, 0,
+        0, 0        
+    )
+    
     vehicle.send_mavlink(to_send)
 
 def send_yaw(vehicle,
@@ -89,7 +92,7 @@ def send_yaw(vehicle,
              arah = 1, # 1 = searah jarum jam, -1 = kebalikan jarum jam
              relative = True #True = relative dari arah sekarang, False = relatif kompas
              ):
-    to_send = vehicle.message_factory.command_log_encode(
+    to_send = vehicle.message_factory.command_long_encode(
         0, 0,
         mavutil.mavlink.MAV_CMD_CONDITION_YAW,
         0,
@@ -118,6 +121,8 @@ def kanan(vehicle, kecepatan, lama):
         vx = vy = vz = 0
         vy += kecepatan
         send_ned_velocity(vehicle, vx, vy, vz)
+        if hitung == 1 or hitung ==2  or hitung ==3 or hitung ==4:
+            print(hitung)
         hitung+=0.1
         sleep(0.1) #perintah maju harus dikirim berulang
 
