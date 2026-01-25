@@ -105,14 +105,7 @@ def take0ff(vehicle,altitude):
 def hover(lama):
     print('Hover:')
     hitung=0
-    while True:
-        if hitung<lama:
-            print(hitung+1)
-            hitung+=1
-            sleep(1)
-        else:
-            print('Hover selesai')
-            break
+    delay(5)
 #Landing
 def land(vehicle):
     print('Landing...')
@@ -183,8 +176,10 @@ def maju(vehicle, kecepatan, lama):
         vx = vy = vz = 0
         vx += kecepatan
         send_ned_velocity(vehicle, vx, vy , vz)
+        print(hitung)
         hitung+=0.1
         sleep(0.1) #perintah maju harus dikirim berulang
+    print(hitung)
         
 def kanan(vehicle, kecepatan, lama):
     hitung = 0
@@ -193,15 +188,15 @@ def kanan(vehicle, kecepatan, lama):
         vx = vy = vz = 0
         vy += kecepatan
         send_ned_velocity(vehicle, vx, vy, vz)
-        if hitung == 1 or hitung ==2  or hitung ==3 or hitung ==4:
-            print(hitung)
+        print(hitung)
         hitung+=0.1
         sleep(0.1) #perintah maju harus dikirim berulang
+    print(hitung)
 
 def yaw(vehicle, degree):
     send_yaw(vehicle,degree)
     print('Yaw 90 derajat',)
-    delay(4)
+    sleep(4)
 
 def maju_loc(vehicle,jarak):
     start= vehicle.location.global_relative_frame
@@ -210,11 +205,9 @@ def maju_loc(vehicle,jarak):
     
     while True:
         current = vehicle.location.global_relative_frame
-
-        sisa = get_distance_metres(current, target)
         tempuh = get_distance_metres(start, current)
 
-        print(f"Tempuh: {tempuh:.2f} m | Sisa: {sisa:.2f} m")
+        print(f"Tempuh: {tempuh:.2f} m")
 
         if tempuh >= jarak:
             print("Target tercapai")
