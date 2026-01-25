@@ -2,12 +2,13 @@
 import collections
 import cv2
 import numpy as np
+import math
 
 from time import sleep
 from collections import abc
 collections.MutableMapping = abc.MutableMapping
 
-from dronekit import connect,VehicleMode
+from dronekit import connect,VehicleMode, LocationGlobalRelative
 from pymavlink import mavutil
 
 #delay
@@ -103,7 +104,19 @@ def send_yaw(vehicle,
         0, 0, 0
     )
     vehicle.send_mavlink(to_send)
+
+def realkoor_plus_10m(real_koor, NorthSouth, EastWest): #membuat koor m ke radian
+    r_earth= 6378137 #radius bumi
+    lat10m= NorthSouth/r_earth #radian lat= jarak/radius
+    lon10m= EastWest/(r_earth*math.cos(math.radians(real_koor.lat))) # dikali cos(latitude) karena semakin dekat kutub, longitude semakin kecil
+
+    newlat= real_koor.lat + math.degrees(lat10m) #koor asli ditambah koor plus 10m
+    newlon= real_koor.lon + math.degrees(lon10m) 
     
+    return LocationGlobalRelative(newlat,newlon,real_koor.alt) #koor baru
+
+def gerak(vehicle,jarak):
+    current_loc 
 def maju(vehicle, kecepatan, lama):
     hitung = 0
     print(f'Drone Maju selama {lama} detik dengan kecepatan {kecepatan} m/s')
