@@ -176,7 +176,7 @@ def get_distance_metres(loc1, loc2):
 
     return math.sqrt((dlat*dlat) + (dlon*dlon)) * 111111 #Pythagoras+ubah derajat ke m
 
-def tunggu_sampe(vehicle,target,d, toleransi = 0.5):
+def tunggu_sampe(vehicle,target, toleransi = 0.5):
     while True:
         loc1= vehicle.location.global_relative_frame #lokasi sebelum gerak
         jarak= get_distance_metres(loc1,target)
