@@ -19,8 +19,8 @@ def run_misi():
     maju(vehicle, 0.25, 4) #maju 4 detik, kecepatan 0.25 m/s
     kanan(vehicle, 0.25, 4) #ke kanan 4 detik, kecepatan 0.25 m/s
     yaw(vehicle, 90) #yaw 90 derajat
+    maju_loc(vehicle,10) #Maju 10 m
     land(vehicle) #Landing
-    maju(vehicle,10) #Maju 10 m
-    
+
 if __name__ == "__main__":
     run_misi()

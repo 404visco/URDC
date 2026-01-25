@@ -116,7 +116,32 @@ def realkoor_plus_10m(real_koor, NorthSouth, EastWest): #membuat koor m ke radia
     return LocationGlobalRelative(newlat,newlon,real_koor.alt) #koor baru
 
 def gerak(vehicle,jarak):
-    current_loc 
+    current_loc= vehicle.location.global_relative_frame
+    arah_drjt =  vehicle.heaading
+    arah_rad = math.radians(arah_drjt)
+
+    gerak_NorthSouth= jarak * math.cos(arah_rad)
+    gerak_EastWest= jarak * math.cos(arah_rad)
+
+    return realkoor_plus_10m(current_loc, gerak_NorthSouth, gerak_EastWest)
+
+def get_distance_metres(loc1, loc2):
+    dlat = loc2.lat - loc1.lat #jarak latitude
+    dlon = loc2.lon - loc1.lon #jarak longitude
+
+    return math.sqrt((dlat*dlat) + (dlon*dlon)) * 111111 #Pythagoras+ubah derajat ke m
+
+def tunggu_sampe(vehicle,target, toleransi = 0.5):
+    while True:
+        current= vehicle.location.global_relative_frame
+        jarak= get_distance_metres(current,target)
+
+        if jarak<=toleransi:
+            print(f'Target {target}m tercapai')
+            break
+        sleep(0.5)
+
+
 def maju(vehicle, kecepatan, lama):
     hitung = 0
     print(f'Drone Maju selama {lama} detik dengan kecepatan {kecepatan} m/s')
@@ -143,3 +168,8 @@ def yaw(vehicle, degree):
     send_yaw(vehicle,degree)
     print('Yaw 90 derajat',)
     delay(3)
+
+def maju_loc(vehicle,jarak):
+    target = gerak(vehicle,jarak)
+    vehicle.simple_goto(target)
+    tunggu_sampe(vehicle,jarak)
