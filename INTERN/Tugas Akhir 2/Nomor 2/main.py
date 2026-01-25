@@ -176,18 +176,6 @@ def get_distance_metres(loc1, loc2):
 
     return math.sqrt((dlat*dlat) + (dlon*dlon)) * 111111 #Pythagoras+ubah derajat ke m
 
-def tunggu_sampe(vehicle,target, toleransi = 0.5):
-    while True:
-        loc1= vehicle.location.global_relative_frame #lokasi sebelum gerak
-        jarak= get_distance_metres(loc1,target)
-        print(jarak)
-
-        if jarak<=toleransi:
-            print(f'Target {jarak}m tercapai')
-            break
-        sleep(0.5)
-
-
 def maju(vehicle, kecepatan, lama):
     hitung = 0
     print(f'Drone Maju selama {lama} detik dengan kecepatan {kecepatan} m/s')
@@ -216,6 +204,20 @@ def yaw(vehicle, degree):
     delay(4)
 
 def maju_loc(vehicle,jarak):
+    start= vehicle.location.global_relative_frame
     target = gerak(vehicle,jarak)
     vehicle.simple_goto(target)
-    tunggu_sampe(vehicle,target,jarak)
+    
+    while True:
+        current = vehicle.location.global_relative_frame
+
+        sisa = get_distance_metres(current, target)
+        tempuh = get_distance_metres(start, current)
+
+        print(f"Tempuh: {tempuh:.2f} m | Sisa: {sisa:.2f} m")
+
+        if tempuh >= jarak:
+            print("Target tercapai")
+            break
+
+        sleep(0.5)
