@@ -10,6 +10,7 @@ MISI
  Landing
 '''
 
+
 def run_misi():
     vehicle = connect_vehicle()
     arm(vehicle)

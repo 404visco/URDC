@@ -11,6 +11,51 @@ collections.MutableMapping = abc.MutableMapping
 from dronekit import connect,VehicleMode, LocationGlobalRelative
 from pymavlink import mavutil
 
+
+
+
+#TELEMETRY
+#----------------------------------------------------------------------------------------
+import tkinter as tk
+import threading
+import queue
+import time
+
+telemetry_queue = queue.Queue()
+
+def log(msg):
+    timestamp = time.strftime("%H:%M:%S")
+    telemetry_queue.put(f"[{timestamp}] {msg}")
+
+def telemetry_window():
+    root = tk.Tk()
+    root.title("Drone Telemetry")
+    root.geometry("420x280")
+    root.attributes("-topmost", True)
+
+    text = tk.Text(
+        root,
+        bg="black",
+        fg="lime",
+        font=("Consolas", 10),
+        wrap="word"
+    )
+    text.pack(expand=True, fill="both")
+
+    def update():
+        while not telemetry_queue.empty():
+            line = telemetry_queue.get()
+            text.insert("end", line + "\n")
+            text.see("end")
+        root.after(100, update)
+
+    update()
+    root.mainloop()
+#---------------------------------------------------------------------------------------------
+
+
+
+
 #delay
 def delay(time):
     hitung = time
@@ -117,11 +162,11 @@ def realkoor_plus_10m(real_koor, NorthSouth, EastWest): #membuat koor m ke radia
 
 def gerak(vehicle,jarak):
     current_loc= vehicle.location.global_relative_frame
-    arah_drjt =  vehicle.heaading
+    arah_drjt =  vehicle.heading
     arah_rad = math.radians(arah_drjt)
 
     gerak_NorthSouth= jarak * math.cos(arah_rad)
-    gerak_EastWest= jarak * math.cos(arah_rad)
+    gerak_EastWest= jarak * math.sin(arah_rad)
 
     return realkoor_plus_10m(current_loc, gerak_NorthSouth, gerak_EastWest)
 
@@ -131,13 +176,14 @@ def get_distance_metres(loc1, loc2):
 
     return math.sqrt((dlat*dlat) + (dlon*dlon)) * 111111 #Pythagoras+ubah derajat ke m
 
-def tunggu_sampe(vehicle,target, toleransi = 0.5):
+def tunggu_sampe(vehicle,target,d, toleransi = 0.5):
     while True:
-        current= vehicle.location.global_relative_frame
-        jarak= get_distance_metres(current,target)
+        loc1= vehicle.location.global_relative_frame #lokasi sebelum gerak
+        jarak= get_distance_metres(loc1,target)
+        print(jarak)
 
         if jarak<=toleransi:
-            print(f'Target {target}m tercapai')
+            print(f'Target {jarak}m tercapai')
             break
         sleep(0.5)
 
@@ -167,9 +213,9 @@ def kanan(vehicle, kecepatan, lama):
 def yaw(vehicle, degree):
     send_yaw(vehicle,degree)
     print('Yaw 90 derajat',)
-    delay(3)
+    delay(4)
 
 def maju_loc(vehicle,jarak):
     target = gerak(vehicle,jarak)
     vehicle.simple_goto(target)
-    tunggu_sampe(vehicle,jarak)
+    tunggu_sampe(vehicle,target,jarak)
