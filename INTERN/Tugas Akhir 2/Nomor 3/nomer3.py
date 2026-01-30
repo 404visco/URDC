@@ -3,12 +3,16 @@ import collections
 import cv2
 import numpy as np
 import math
+from pymavlink import mavutil
 
+from time import sleep
 import time
 from collections import abc
 collections.MutableMapping = abc.MutableMapping
 
 from dronekit import connect,VehicleMode, LocationGlobalRelative
+
+import global_variable
 
 #delay
 def delay(time):
@@ -16,7 +20,7 @@ def delay(time):
     while hitung>0:
         print(hitung)
         hitung-=1
-        time.sleep(1)
+        sleep(1)
     print('lesgo!')
 
 def connect_vehicle():
@@ -52,6 +56,24 @@ def takeoff(vehicle: object, target_altitude: float):
     
     print("Taking off...")
     vehicle.simple_takeoff(target_altitude)
+
+def send_global_position(vehicle: object, code: int):
+    latitude = global_variable.waypoint[code]["latitude"]
+    longitude = global_variable.waypoint[code]["longitude"]
+    altitude = global_variable.waypoint[code]["altitude"]
+    
+    to_send = vehicle.message_factory.set_position_target_global_int_encode(
+        10, 0, 0,
+        mavutil.mavlink.MAV_FRAME_GLOBAL_RELATIVE_ALT,
+        0b110111111000,
+        int(latitude * 10**7),
+        int(longitude * 10**7),
+        altitude,
+        0, 0, 0,
+        0, 0, 0,
+        0, 0)
+    
+    vehicle.send_mavlink(to_send)
 
 def get_distance_metres(loc1, loc2):
     dlat = loc2.lat - loc1.lat #jarak latitude

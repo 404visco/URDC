@@ -1,8 +1,29 @@
 from nomer3 import *
-vehicle = connect("tcp:127.0.0.1:5762", wait_ready=True)
 
-def get_distance_metres(loc1, loc2):
-    dlat = loc2.lat - loc1.lat #jarak latitude
-    dlon = loc2.lon - loc1.lon #jarak longitude
+def eksekusi():
+    vehicle= connect_vehicle()
 
-    return math.sqrt((dlat*dlat) + (dlon*dlon)) * 113195,4 #(113195,4: keliling bumi/360)
+    change_mode(vehicle, 'GUIDED')
+    arm(vehicle)
+
+    takeoff(vehicle, 5)
+    delay(3)
+
+    #eksekusi
+    send_global_position(vehicle, 1)
+    record_environment()
+    send_global_position(vehicle, 2)
+    record_environment()
+    send_global_position(vehicle, 3)
+    record_environment()
+    send_global_position(vehicle, 4)
+    record_environment()
+    send_global_position(vehicle, 5)
+    record_environment()
+
+    #balik
+    vehicle.mode = VehicleMode("RTL")
+
+    vehicle.close()
+
+eksekusi()
