@@ -105,8 +105,8 @@ def take0ff(vehicle,altitude):
             break
 def hover(lama):
     print('Hover:')
-    hitung=0
-    delay(5)
+    delay(lama)
+    
 #Landing
 def land(vehicle):
     print('Landing...')

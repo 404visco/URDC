@@ -75,31 +75,18 @@ def send_global_position(vehicle: object, code: int):
     
     vehicle.send_mavlink(to_send)
 
-def get_distance_metres(loc1, loc2):
-    dlat = loc2.lat - loc1.lat #jarak latitude
-    dlon = loc2.lon - loc1.lon #jarak longitude
-
-    return math.sqrt((dlat*dlat) + (dlon*dlon)) * 113195,4 #(113195,4: keliling bumi/360)
-
 def record_environment(duration=5, waypoint_index=0):
-    """
-    Menyalakan Webcam Laptop sebagai simulasi kamera drone.
-    """
-    
     cap = cv2.VideoCapture(0)
-    
     if not cap.isOpened():
         return
-
     start_time = time.time()
     while time.time() - start_time < duration:
         ret, frame = cap.read()
         if ret:
-            # Overlay Teks Status
+            # Window
             cv2.putText(frame, f"REC | WP: {waypoint_index}", (10, 30), 
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 2)
             cv2.imshow("Drone Camera Feed", frame)
-            
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
         else:
