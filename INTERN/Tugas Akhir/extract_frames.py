@@ -35,15 +35,15 @@ def extract_frames(video_file, interval):
     cap.release()
     print(f"Selesai. {extracted_count} frame diekstrak.")
 
-    if __name__ == "__main__":
-        parser = argparse.ArgumentParser(description="Extract frame dari video")
-        parser.add_argument("video", help="Path ke file video")
-        parser.add_argument(
-            "--interval",
-            type=int,
-            default=30,
-            help="Ambil 1 frame tiap N frame"
-        )
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Extract frame dari video")
+    parser.add_argument("video", help="Path ke file video")
+    parser.add_argument(
+        "--interval",
+        type=int,
+        default=30,
+        help="Ambil 1 frame tiap N frame"
+    )
 
-    args = parser.parse_args()
-    extract_frames(args.video, args.interval)
+args = parser.parse_args()
+extract_frames(args.video, args.interval)
