@@ -127,8 +127,22 @@ def maju(vehicle:object, distance:float):
             print("Target tercapai")
             break
 
-        time.sleep(0.5)
+        time.sleep(0.2)
 
 def yaw(vehicle:object, degree:float, arah:int):
     send_yaw(vehicle,degree,arah)
+    # heading awal
+    start_yaw = vehicle.heading
+    # hitung target absolut
+    target_yaw = (start_yaw + degree * arah) % 360 #karena heading dalam rentang 0-360
+    tolerance= 5 #toleransi 5 derajat, agar loop bisa selesai
+
+    while True:
+        current_yaw = vehicle.heading
+        # hitung selisih sudut terpendek
+        diff = abs((target_yaw - current_yaw + 180) % 360 - 180)
+        if diff <= tolerance:
+            break
+        time.sleep(0.5)
+
     print(f'Yaw {degree * arah} derajat')
