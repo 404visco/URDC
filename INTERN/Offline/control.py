@@ -8,7 +8,7 @@ from collections import abc
 collections.MutableMapping = abc.MutableMapping
 
 from pymavlink import mavutil
-from dronekit import VehicleMode,connect
+from dronekit import VehicleMode,connect,LocationGlobalRelative
 
 #Connect Drone
 def connect_vehicle(vehicle:object):
@@ -73,8 +73,11 @@ def jarak(real_koor, NorthSouth, EastWest): #membuat koor m ke radian
     r_earth= 6378137 #radius bumi
     lat_target= NorthSouth/r_earth #radian lat= jarak/radius
     lon_target= EastWest/(r_earth*math.cos(math.radians(real_koor.lat))) # dikali cos(latitude) karena semakin dekat kutub, longitude semakin kecil
-    newlat= real_koor.lat + math.degrees(lat_target) #koor asli ditambah koor plus 10m
+
+    #koor asli ditambah koor plus 10m
+    newlat= real_koor.lat + math.degrees(lat_target)
     newlon= real_koor.lon + math.degrees(lon_target) 
+
     return LocationGlobalRelative(newlat,newlon,real_koor.alt) #koor baru
 
 def gerak(vehicle,jarak):
@@ -84,6 +87,12 @@ def gerak(vehicle,jarak):
     gerak_NorthSouth= jarak * math.cos(arah_rad)
     gerak_EastWest= jarak * math.sin(arah_rad)
     return jarak(current_loc, gerak_NorthSouth, gerak_EastWest)
+
+def get_distance_metres(loc1, loc2):
+    dlat = loc2.lat - loc1.lat #jarak latitude
+    dlon = loc2.lon - loc1.lon #jarak longitude
+
+    return math.sqrt((dlat*dlat) + (dlon*dlon)) * 111319.888 #1 derajat bumi = 111,32 km
 
 #Takeoff
 def takeoff(vehicle:object, altitude: float):
@@ -103,4 +112,23 @@ def land(vehicle:object):
     change_mode(vehicle, 'LAND')
     print('Landed')
 
-def maju(vehicle, distance):
+def maju(vehicle:object, distance:float):
+    start= vehicle.location.global_relative_frame
+    target = gerak(vehicle,distance)
+    vehicle.simple_goto(target)
+    
+    while True: #Tunggu sampai target jarak
+        current = vehicle.location.global_relative_frame #Lokasi sekarang
+        tempuh = get_distance_metres(start, current) #yang sudah ditempuh
+
+        print(f"Tempuh: {tempuh:.2f} m")
+
+        if tempuh >= distance:
+            print("Target tercapai")
+            break
+
+        time.sleep(0.5)
+
+def yaw(vehicle:object, degree:float, arah:int):
+    send_yaw(vehicle,degree,arah)
+    print(f'Yaw {degree * arah} derajat')
