@@ -49,3 +49,8 @@ def takeoff(vehicle:object, altitude: float):
             break
         time.sleep(1)
 
+#Landing
+def land(vehicle:object):
+    print('Landing...')
+    change_mode(vehicle, 'LAND')
+    print('Landed')
