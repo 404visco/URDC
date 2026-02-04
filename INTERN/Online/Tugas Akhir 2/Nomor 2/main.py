@@ -144,25 +144,21 @@ def send_yaw(vehicle,
     )
     vehicle.send_mavlink(to_send)
 
-def realkoor_plus_10m(real_koor, NorthSouth, EastWest): #membuat koor m ke radian
+def jarak(real_koor, NorthSouth, EastWest): #membuat koor m ke radian
     r_earth= 6378137 #radius bumi
-    lat10m= NorthSouth/r_earth #radian lat= jarak/radius
-    lon10m= EastWest/(r_earth*math.cos(math.radians(real_koor.lat))) # dikali cos(latitude) karena semakin dekat kutub, longitude semakin kecil
-
-    newlat= real_koor.lat + math.degrees(lat10m) #koor asli ditambah koor plus 10m
-    newlon= real_koor.lon + math.degrees(lon10m) 
-    
+    lat_target= NorthSouth/r_earth #radian lat= jarak/radius
+    lon_target= EastWest/(r_earth*math.cos(math.radians(real_koor.lat))) # dikali cos(latitude) karena semakin dekat kutub, longitude semakin kecil
+    newlat= real_koor.lat + math.degrees(lat_target) #koor asli ditambah koor plus 10m
+    newlon= real_koor.lon + math.degrees(lon_target) 
     return LocationGlobalRelative(newlat,newlon,real_koor.alt) #koor baru
 
 def gerak(vehicle,jarak):
     current_loc= vehicle.location.global_relative_frame
     arah_drjt =  vehicle.heading
     arah_rad = math.radians(arah_drjt)
-
     gerak_NorthSouth= jarak * math.cos(arah_rad)
     gerak_EastWest= jarak * math.sin(arah_rad)
-
-    return realkoor_plus_10m(current_loc, gerak_NorthSouth, gerak_EastWest)
+    return jarak(current_loc, gerak_NorthSouth, gerak_EastWest)
 
 def get_distance_metres(loc1, loc2):
     dlat = loc2.lat - loc1.lat #jarak latitude

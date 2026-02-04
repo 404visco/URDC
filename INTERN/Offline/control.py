@@ -2,6 +2,7 @@ import collections
 import cv2
 import time
 import numpy as np
+import math
 
 from collections import abc
 collections.MutableMapping = abc.MutableMapping
@@ -50,6 +51,40 @@ def send_ned_velocity(vehicle: object, vx: float, vy:float, vz: float):
     )
     vehicle.send_mavlink(to_send)
 
+def send_yaw(vehicle: object,
+             target_yaw:float,
+             arah:int, #1 =Searah jarum jam, -1 berlawanan jarum jam
+             v_yaw= 15,
+             relative=True):
+    to_send= vehicle.message_factory.command_long_encode(
+        0, 0,
+        mavutil.mavlink.MAV_CMD_CONDITION_YAW,
+        0,
+        target_yaw,
+        v_yaw,
+        arah,
+        1 if relative else 0,
+        0, 0, 0
+    )
+    vehicle.send_mavlink(to_send)
+
+#setup gerak
+def jarak(real_koor, NorthSouth, EastWest): #membuat koor m ke radian
+    r_earth= 6378137 #radius bumi
+    lat_target= NorthSouth/r_earth #radian lat= jarak/radius
+    lon_target= EastWest/(r_earth*math.cos(math.radians(real_koor.lat))) # dikali cos(latitude) karena semakin dekat kutub, longitude semakin kecil
+    newlat= real_koor.lat + math.degrees(lat_target) #koor asli ditambah koor plus 10m
+    newlon= real_koor.lon + math.degrees(lon_target) 
+    return LocationGlobalRelative(newlat,newlon,real_koor.alt) #koor baru
+
+def gerak(vehicle,jarak):
+    current_loc= vehicle.location.global_relative_frame
+    arah_drjt =  vehicle.heading
+    arah_rad = math.radians(arah_drjt)
+    gerak_NorthSouth= jarak * math.cos(arah_rad)
+    gerak_EastWest= jarak * math.sin(arah_rad)
+    return jarak(current_loc, gerak_NorthSouth, gerak_EastWest)
+
 #Takeoff
 def takeoff(vehicle:object, altitude: float):
     change_mode(vehicle, 'GUIDED') #Ubah ke mode guided dulu
@@ -67,3 +102,5 @@ def land(vehicle:object):
     print('Landing...')
     change_mode(vehicle, 'LAND')
     print('Landed')
+
+def maju(vehicle, distance):
