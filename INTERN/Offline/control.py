@@ -37,6 +37,19 @@ def disarm(vehicle:object):
     vehicle.disarm(wait=True)
     print('Disarmed')
 
+#Perintah gerak
+def send_ned_velocity(vehicle: object, vx: float, vy:float, vz: float):
+    to_send= vehicle.message_factory.set_position_target_local_ned_encode(
+        0, 0, 0,
+        mavutil.mavlink.MAV_FRAME_BODY_OFFSET_NED,
+        mavutil.amvlink.POSITION_TARGET_TYPEMASK_YAW_IGNORE,
+        0, 0, 0,
+        vx, vy, vz,
+        0, 0, 0,
+        0, 0
+    )
+    vehicle.send_mavlink(to_send)
+
 #Takeoff
 def takeoff(vehicle:object, altitude: float):
     change_mode(vehicle, 'GUIDED') #Ubah ke mode guided dulu
