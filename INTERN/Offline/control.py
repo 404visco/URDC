@@ -22,6 +22,7 @@ def change_mode(vehicle:object, flight_mode:str):
         print('Failed to change mode')
     print(f'Flight mode changed to {flight_mode}')
 
+#Arm
 def arm(vehicle: object):
     print('Arming')
     vehicle.arm(wait=True)
@@ -30,8 +31,21 @@ def arm(vehicle: object):
         time.sleep(1)
     print('Armed')
 
+#Disarm
 def disarm(vehicle:object):
     print('Disarming')
     vehicle.disarm(wait=True)
     print('Disarmed')
+
+#Takeoff
+def takeoff(vehicle:object, altitude: float):
+    change_mode(vehicle, 'GUIDED') #Ubah ke mode guided dulu
+    arm(vehicle) #arm
+    print('Takeoff')
+    vehicle.simple_takeoff(altitude)
+    while True: #Tunggu sampai drone sudah mencapai target altitude
+        alt0 = vehicle.location.global_relative_frame.alt #pantau altitude
+        if alt0 >= altitude*0.95: #toleransi agar tidak loop selamanya
+            break
+        time.sleep(1)
 
