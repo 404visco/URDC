@@ -62,7 +62,7 @@ def send_yaw(vehicle: object,
         0,
         target_yaw,
         v_yaw,
-        arah,
+        1 if target_yaw>= 0 else -1,
         1 if relative else 0,
         0, 0, 0
     )
@@ -112,8 +112,13 @@ def land(vehicle:object):
     change_mode(vehicle, 'LAND')
     print('Landed')
 
-def maju(vehicle:object, distance:float):
-    start= vehicle.location.global_relative_frame
+def maju(vehicle:object, distance:float, speed:float):
+    vehicle.groundspeed = speed
+    start = LocationGlobalRelative(
+        vehicle.location.global_relative_frame.lat,
+        vehicle.location.global_relative_frame.lon,
+        vehicle.location.global_relative_frame.alt
+    )
     target = gerak(vehicle,distance)
     vehicle.simple_goto(target)
     
@@ -123,18 +128,18 @@ def maju(vehicle:object, distance:float):
 
         print(f"Tempuh: {tempuh:.2f} m")
 
-        if tempuh >= distance:
+        if tempuh >= distance-0.5: #toleransi 0.5 m
             print("Target tercapai")
             break
 
         time.sleep(0.2)
 
-def yaw(vehicle:object, degree:float, arah:int):
-    send_yaw(vehicle,degree,arah)
+def yaw(vehicle:object, degree:float):
+    send_yaw(vehicle,abs(degree))
     # heading awal
     start_yaw = vehicle.heading
     # hitung target absolut
-    target_yaw = (start_yaw + degree * arah) % 360 #karena heading dalam rentang 0-360
+    target_yaw = (start_yaw + degree) % 360 #karena heading dalam rentang 0-360
     tolerance= 5 #toleransi 5 derajat, agar loop bisa selesai
 
     while True:
@@ -145,4 +150,4 @@ def yaw(vehicle:object, degree:float, arah:int):
             break
         time.sleep(0.5)
 
-    print(f'Yaw {degree * arah} derajat')
+    print(f'Yaw {degree} derajat')
