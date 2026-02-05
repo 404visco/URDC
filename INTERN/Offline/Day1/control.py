@@ -11,7 +11,7 @@ from pymavlink import mavutil
 from dronekit import VehicleMode,connect,LocationGlobalRelative
 
 #Connect Drone
-def connect_vehicle(vehicle:object):
+def connect_vehicle():
     vehicle = connect("tcp:127.0.0.1:5762", wait_ready=True)
     return vehicle
 
@@ -62,7 +62,7 @@ def send_yaw(vehicle: object,
         0,
         target_yaw,
         v_yaw,
-        1 if target_yaw>= 0 else -1,
+        arah,
         1 if relative else 0,
         0, 0, 0
     )
@@ -80,12 +80,12 @@ def jarak(real_koor, NorthSouth, EastWest): #membuat koor m ke radian
 
     return LocationGlobalRelative(newlat,newlon,real_koor.alt) #koor baru
 
-def gerak(vehicle,jarak):
+def gerak(vehicle,d):
     current_loc= vehicle.location.global_relative_frame
     arah_drjt =  vehicle.heading
     arah_rad = math.radians(arah_drjt)
-    gerak_NorthSouth= jarak * math.cos(arah_rad)
-    gerak_EastWest= jarak * math.sin(arah_rad)
+    gerak_NorthSouth= d * math.cos(arah_rad)
+    gerak_EastWest= d * math.sin(arah_rad)
     return jarak(current_loc, gerak_NorthSouth, gerak_EastWest)
 
 def get_distance_metres(loc1, loc2):
@@ -135,7 +135,7 @@ def maju(vehicle:object, distance:float, speed:float):
         time.sleep(0.2)
 
 def yaw(vehicle:object, degree:float):
-    send_yaw(vehicle,abs(degree))
+    send_yaw(vehicle,abs(degree), 1 if degree>=0 else -1)
     # heading awal
     start_yaw = vehicle.heading
     # hitung target absolut

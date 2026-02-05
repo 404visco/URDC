@@ -58,7 +58,7 @@ def run():
     maju(vehicle,0.8, 0.4)
     #Wp7 --> Wp8
     maju(vehicle,0.8, 0.4)
-    yaw(vehicle, -90, 0.4)
+    yaw(vehicle, -90)
     #Wp8 --> Wp9
     maju(vehicle,0.4, 0.4)
     #Wp9 --> Wp10
