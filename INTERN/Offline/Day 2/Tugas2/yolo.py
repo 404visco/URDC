@@ -1,5 +1,6 @@
 import cv2
 import mediapipe as mp
+import global_variable as gv
 
 mp_hands = mp.solutions.hands
 hands = mp_hands.Hands()
@@ -52,8 +53,11 @@ def get_finger_count():
                 (30, 60),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 1.5, (0, 255, 0), 3)
-
+    
     cv2.imshow("Deteksi Jari", frame)
-    cv2.waitKey(1)
+    key = cv2.waitKey(1) & 0xFF
+    if key == 27:  # ESC
+        gv.running = False
+        return None
 
     return finger_count

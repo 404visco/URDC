@@ -7,7 +7,7 @@ import time
 vehicle = connect_vehicle()
 
 def camera_loop():
-    while True:
+    while gv.running:
         fc = get_finger_count()
         if fc is not None:
             gv.finger_count = fc
@@ -23,7 +23,7 @@ def is_landed(vehicle, alt_thresh=0.2):
 
 def hand_control():
     change_mode(vehicle, "GUIDED")
-    while True:
+    while gv.running:
         if is_landed(vehicle):
             change_mode(vehicle, "GUIDED")
         if not is_takeoff(vehicle):
@@ -36,5 +36,11 @@ def hand_control():
 
 
 threading.Thread(target=camera_loop, daemon=True).start()
-
 hand_control()
+
+#Exit n reset
+gv.current_velocity = (0, 0, 0)
+send_ned_velocity(vehicle, 0, 0, 0)
+
+vehicle.close()
+cv2.destroyAllWindows()
