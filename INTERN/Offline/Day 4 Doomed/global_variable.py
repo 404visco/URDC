@@ -1,0 +1,36 @@
+# ================== GLOBAL VARIABLE ==================
+
+# Drone dimension (meter)
+DRONE_WIDTH = 0.6
+DRONE_LENGTH = 0.6
+DRONE_HEIGHT = 0.3
+
+# Wall
+WALL_DISTANCE = 2.5
+WALL_HEIGHT = 1.5
+
+# Altitude
+TARGET_ALT = 1.5
+ALT_TOL = 0.15
+
+# Vision
+FRAME_WIDTH = 640
+FRAME_HEIGHT = 480
+FRAME_CX = FRAME_WIDTH // 2
+FRAME_CY = FRAME_HEIGHT // 2
+
+VISION_DEADZONE_PX = 15
+
+# Controller
+KP_VISION = 0.002
+KP_WALL = 0.3
+MAX_VEL = 0.4
+LOWPASS_ALPHA = 0.7
+
+# Stability
+STABLE_REQUIRED = 5
+
+# Servo
+SERVO_CHANNEL = 9
+SERVO_GRAB = 1900
+SERVO_RELEASE = 1100

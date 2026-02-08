@@ -1,4 +1,3 @@
-import argparse #terjemahin python variable di terminal
 import cv2 #Computer Vision
 import os #Untuk ambil file
 
@@ -25,7 +24,7 @@ def extract_frames(video_file, interval):
         ret, frame = cap.read()
         if not ret:
             break
-        if frame_count % interval == 0:
+        if frame_count < interval:
             frame_filename = '%s/frame_%04d.jpg' % (output_dir, extracted_count)
             cv2.imwrite(frame_filename, frame)
             extracted_count += 1
@@ -35,15 +34,6 @@ def extract_frames(video_file, interval):
     cap.release()
     print(f"Selesai. {extracted_count} frame diekstrak.")
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Extract frame dari video")
-    parser.add_argument("video", help="Path ke file video")
-    parser.add_argument(
-        "--interval",
-        type=int,
-        default=30,
-        help="Ambil 1 frame tiap N frame"
-    )
+video_path= 'C:/Users/visco/JENTAYU/INTERN/Online/Tugas Akhir/rubik.mp4'
 
-args = parser.parse_args()
-extract_frames(args.video, args.interval)
+extract_frames(video_path, 1500)
