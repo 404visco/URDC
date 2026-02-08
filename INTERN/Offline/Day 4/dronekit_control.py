@@ -105,7 +105,7 @@ def terbang(vehicle):
         return
     koreksi = gv.dist_left - gv.dist_right #buat tau drone perlu gerak ke mana
     vy = -0.4*koreksi
-    vy = max(min(vy, 0.2), -0.2)
+    vy = max(min(vy, 0.3), -0.3)
     alt = vehicle.location.global_relative_frame.alt
     alt_error = gv.alt_target - alt
     vz = max(min(0.4 * alt_error, 0.3), -0.3)
