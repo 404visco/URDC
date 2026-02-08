@@ -1,10 +1,11 @@
 import global_variable as gv
-from dronekit import VehicleMode,connect
+from dronekit import VehicleMode,connect, LocationGlobalRelative
 from pymavlink import mavutil
 import collections
 from collections import abc
 collections.MutableMapping = abc.Mutablemapping
 import time
+import math
 
 def connect_vehicle():
     vehicle = connect("tcp:127.0.0.1:5762", wait_ready=True)
@@ -95,6 +96,9 @@ def lidar_callback(self, name, msg):
 
     elif msg.orientation == mavutil.mavlink.MAV_SENSOR_ROTATION_RIGHT:
         gv.dist_right = dist
+    elif msg.orientation == mavutil.mavlink.MAV_SENSOR_ROTATION_FORWARD:
+        gv.dist_front = dist
+
 
 
 def start_lidar_listener(vehicle:object):
@@ -127,3 +131,66 @@ def set_servo(vehicle, channel, pwm):
         0,0,0,0,0
     )
     vehicle.send_mavlink(msg)
+
+
+def send_yaw(vehicle: object,
+             target_yaw:float,
+             arah:int, #1 =Searah jarum jam, -1 berlawanan jarum jam
+             v_yaw= 15,
+             relative=True):
+    to_send= vehicle.message_factory.command_long_encode(
+        0, 0,
+        mavutil.mavlink.MAV_CMD_CONDITION_YAW,
+        0,
+        target_yaw,
+        v_yaw,
+        arah,
+        1 if relative else 0,
+        0, 0, 0
+    )
+    vehicle.send_mavlink(to_send)
+
+def yaw(vehicle:object, degree:float):
+    send_yaw(vehicle,abs(degree), 1 if degree>=0 else -1)
+    # heading awal
+    start_yaw = vehicle.heading
+    # hitung target absolut
+    target_yaw = (start_yaw + degree) % 360 #karena heading dalam rentang 0-360
+    tolerance= 5 #toleransi 5 derajat, agar loop bisa selesai
+
+    while True:
+        current_yaw = vehicle.heading
+        # hitung selisih sudut terpendek
+        diff = abs((target_yaw - current_yaw + 180) % 360 - 180)
+        if diff <= tolerance:
+            break
+        time.sleep(0.5)
+
+    print(f'Yaw {degree} derajat')
+
+
+def approach_front_wall(vehicle):
+    if gv.dist_front is None:
+        send_ned_velocity(vehicle, 0,0,0)
+        return False
+
+    error = gv.dist_front - gv.front_target
+    vx = 0.4 * error
+    vx = max(min(vx, 0.3), -0.3)
+
+    send_ned_velocity(vehicle, vx, 0, 0)
+
+    return abs(error) < gv.front_tol
+
+def decide_yaw_direction():
+    if gv.dist_left is None or gv.dist_right is None:
+        return None
+
+    diff = gv.dist_right - gv.dist_left
+
+    if diff > gv.yaw_margin:
+        return "RIGHT"
+    elif diff < -gv.yaw_margin:
+        return "LEFT"
+    else:
+        return "CENTER"
