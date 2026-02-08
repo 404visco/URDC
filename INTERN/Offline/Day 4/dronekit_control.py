@@ -46,30 +46,30 @@ def takeoff(vehicle:object, altitude:float):
             break
         time.sleep(1)
 
-def maju(speed):
+def maju(vehicle, speed):
     vx = vy = vz = 0 #awal semua 0
     vx= +speed
-    send_ned_velocity(vx,vy,vz)
-def mundur(speed):
+    send_ned_velocity(vehicle,vx,vy,vz)
+def mundur(vehicle,speed):
     vx = vy = vz = 0 #awal semua 0
     vx= -speed
-    send_ned_velocity(vx,vy,vz)
-def kanan(speed):
+    send_ned_velocity(vehicle,vx,vy,vz)
+def kanan(vehicle,speed):
     vx = vy = vz = 0 #awal semua 0
     vy= +speed
-    send_ned_velocity(vx,vy,vz)
-def kiri(speed):
+    send_ned_velocity(vehicle,vx,vy,vz)
+def kiri(vehicle,speed):
     vx = vy = vz = 0 #awal semua 0
     vy= -speed
-    send_ned_velocity(vx,vy,vz)
-def naik(speed):
+    send_ned_velocity(vehicle,vx,vy,vz)
+def naik(vehicle,speed):
     vx = vy = vz = 0 #awal semua 0
     vz= -speed
-    send_ned_velocity(vx,vy,vz)
-def turun(speed):
+    send_ned_velocity(vehicle,vx,vy,vz)
+def turun(vehicle,speed):
     vx = vy = vz = 0 #awal semua 0
     vz= +speed
-    send_ned_velocity(vx,vy,vz)
+    send_ned_velocity(vehicle,vx,vy,vz)
 def alt_hold(vehicle):
     alt = vehicle.location.global_relative_frame.alt
     error = gv.alt_target - alt
@@ -79,6 +79,10 @@ def alt_hold(vehicle):
     else:
         vz = 0.4 if error < 0 else -0.4
         send_ned_velocity(vehicle, vx,vy,vz)
+def land(vehicle:object):
+    print('Landing...')
+    change_mode(vehicle, 'LAND')
+    print('Landed')
 
 def lidar_callback(self, name, msg):
     if msg.current_distance <= 0:
@@ -105,7 +109,12 @@ def terbang(vehicle):
     alt = vehicle.location.global_relative_frame.alt
     alt_error = gv.alt_target - alt
     vz = max(min(0.4 * alt_error, 0.3), -0.3)
-    vx = gv.speed_drone
+    if gv.object_detected:
+        vx = -0.4 * gv.object_y_error
+        vx = max(min(vx, 0.3), -0.3)
+    else:
+        vx = gv.speed_drone
+
     send_ned_velocity(vehicle, vx,vy,vz)
 
 def set_servo(vehicle, channel, pwm):
